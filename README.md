@@ -59,3 +59,11 @@ server {
   # add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 }
 ```
+```bash
+02:20:39 root@homesrv docker-app ±|main|→ curl -I http://v.bo.ms
+HTTP/1.1 302 Found
+Server: openresty/1.21.4.1
+Date: Sat, 18 Mar 2023 18:20:47 GMT
+Connection: keep-alive
+Location: /web/index.html
+```
