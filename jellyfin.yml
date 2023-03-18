@@ -1,0 +1,25 @@
+---
+version: '3.5'
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - /opt/app/jellyfin/config:/config
+      - /opt/app/jellyfin/cache:/cache
+      - /video:/media:rw
+      - /dev/dri:/dev/dri
+    restart: 'unless-stopped'
+    devices:
+      - "/dev/dri:/dev/dri"
+    environment:
+    # Optional - alternative address used for autodiscovery
+      - JELLYFIN_PublishedServerUrl=http://v.bo.ms
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    # Optional - may be necessary for docker healthcheck to pass if running in host network mode
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

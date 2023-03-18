@@ -1,0 +1,11 @@
+---
+version: '3'
+services:
+  mysql:
+    image: mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: westlife
+      MYSQL_DATABASE: grafana
+    ports:
+      - '3306:3306'
+    restart: 'unless-stopped' 

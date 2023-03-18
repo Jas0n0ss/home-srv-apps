@@ -1,0 +1,85 @@
+version: '3.5'
+services:
+  prometheus:
+    image: prom/prometheus
+    privileged: true
+    container_name: prometheus
+    hostname: prometheus
+    #network_mode: host
+    ports:
+      - "9090:9090"
+    volumes:
+      - /etc/prometheus:/etc/prometheus
+    restart: unless-stopped
+  
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+  
+  grafana:
+    image: grafana/grafana-oss
+    privileged: true
+    container_name: grafana
+    hostname: grafana
+    volumes:
+      - '/etc/grafana:/etc/grafana'
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+  
+  mysql:
+    image: mysql
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: westlife
+      MYSQL_DATABASE: grafana
+    volumes:
+      - '/var/lib/mysql:/var/lib/mysql'
+    ports:
+      - '3306:3306'
+    restart: 'unless-stopped'
+
+
+  node-exporter:
+     image: quay.io/prometheus/node-exporter
+     container_name: node-exporter
+     privileged: true
+     container_name: node-exporter
+     hostname: node-exporter
+     restart: unless-stopped
+     ports:
+      - "9100:9100"
+  
+  vmware_exporter:
+    image: pryorda/vmware_exporter
+    container_name: vmware_exporter
+    ports:
+      - "9272:9272"
+    environment:
+      VSPHERE_USER: root
+      VSPHERE_PASSWORD: westlife1Jason
+      VSPHERE_HOST: v.ms
+      VSPHERE_IGNORE_SSL: "True"
+      VSPHERE_SPECS_SIZE: "2000"
+    restart: "unless-stopped"
+  
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter
+    restart: unless-stopped
+    privileged: true
+    container_name: nginx-exporter
+    hostname: nginx-exporter
+    command:
+      - '--nginx.scrape-uri=http://bo.ms/nginx_status'
+    ports:
+      - "9113:9113"

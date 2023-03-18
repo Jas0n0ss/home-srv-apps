@@ -1,0 +1,109 @@
+---
+version: '3.5'
+services:
+  xunlei:
+    image: cnk3x/xunlei:latest
+    privileged: true
+    container_name: xunlei
+    hostname: homesrv
+    #network_mode: host
+    ports:
+      - "2345:2345"
+    volumes:
+      - /etc/xunlei:/xunlei/data
+      - /video:/xunlei/downloads
+    restart: unless-stopped
+
+  alist:
+    image: xhofe/alist:latest
+    privileged: true
+    container_name: alist
+    hostname: alist
+    ports:
+      - "5244:5244"
+    volumes:
+      - /etc/alist:/opt/alist/data
+      - /video:/media
+      - /data/pub:/pub
+    environment:
+      - GUID=1000
+      - PGID=1000
+      - UMASK_SET=022
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+
+  Aria2-Pro:
+    container_name: aria2-pro
+    image: p3terx/aria2-pro
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK_SET=022
+      - RPC_SECRET=westlife
+      - RPC_PORT=6800
+      - LISTEN_PORT=6888
+      - DISK_CACHE=64M
+      - IPV6_MODE=false
+      - UPDATE_TRACKERS=true
+      - CUSTOM_TRACKER_URL=
+      - TZ=Asia/Shanghai
+    volumes:
+      - /etc/aria2:/config
+      - /video:/downloads
+    #network_mode: host
+    ports:
+      - "6800:6800"
+      - "6888:6888"
+      - "6888:6888/udp"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  AriaNg:
+    container_name: ariang
+    image: p3terx/ariang
+    command: --port 6880 --ipv6
+    network_mode: host
+    ports:
+      - "6880:6880"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - /opt/app/jellyfin/config:/config
+      - /opt/app/jellyfin/cache:/cache
+      - /video:/media:rw
+      - /dev/dri:/dev/dri
+    restart: 'unless-stopped'
+    devices:
+      - "/dev/dri:/dev/dri"
+    environment:
+    # Optional - alternative address used for autodiscovery
+      - JELLYFIN_PublishedServerUrl=http://v.bo.ms
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    # Optional - may be necessary for docker healthcheck to pass if running in host network mode
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  speedtest:
+    #image: adolfintel/speedtest
+    image: jason/speedtest:v1
+    privileged: true
+    container_name: sptest
+    hostname: sptest
+    #network_mode: host
+    ports:
+      - "8010:8010"
+    restart: unless-stopped

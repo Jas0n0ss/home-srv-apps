@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  vmware_exporter:
+    image: pryorda/vmware_exporter
+    container_name: vmware_exporter
+    ports:
+      - "9272:9272"
+    environment:
+      VSPHERE_USER: root
+      VSPHERE_PASSWORD: westlife1Jason
+      VSPHERE_HOST: v.ms
+      VSPHERE_IGNORE_SSL: "True"
+      VSPHERE_SPECS_SIZE: "2000"
+    restart: "unless-stopped"
+
