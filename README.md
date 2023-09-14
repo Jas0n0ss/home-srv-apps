@@ -1,4 +1,12 @@
 # home-srv-apps
+
+#### Setup 
+
+```bash
+docker-compose apply -f docker-apps.yml
+docker-compose -f docker-apps.yml ps
+```
+
 ```bash
 02:13:45 root@homesrv docker-app ±|main ✗|→ docker-compose -f docker-apps.yml ps
   Name                 Command               State                                                              Ports
@@ -20,25 +28,16 @@ node-exporter     /bin/node_exporter               Up             0.0.0.0:9100->
 prometheus        /bin/prometheus --config.f ...   Up             0.0.0.0:9090->9090/tcp,:::9090->9090/tcp
 vmware_exporter   /usr/local/bin/vmware_exporter   Up             0.0.0.0:9272->9272/tcp,:::9272->9272/tcp
 ```
-# nginx conf
+#### nginx.conf
 ```Nginx
 server {
   listen 80;
-  server_name v.bo.ms;
-
-
+  server_name v.bo.ms; # I got home internal DNS Server for custom domain
   # Enable Gzip compression for faster page load times
   gzip on;
   gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
-
   # Set caching headers to improve performance
   add_header Cache-Control "public, max-age=86400";
-
-  # Redirect all HTTP requests to HTTPS (optional, if you want to force HTTPS)
-  # if ($scheme != "https") {
-  #   return 301 https://$server_name$request_uri;
-  # }
-
   # Proxy requests to the backend server
   location / {
     proxy_pass http://127.0.0.1:8096;
@@ -48,15 +47,11 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_redirect off;
   }
-
   # Security headers to improve site security
   add_header X-Content-Type-Options nosniff;
   add_header X-Frame-Options "SAMEORIGIN";
   add_header X-XSS-Protection "1; mode=block";
   add_header Referrer-Policy "strict-origin";
-
-  # Enable HSTS (HTTP Strict Transport Security) to force all requests to use HTTPS (optional, if you want to enable HTTPS in the future)
-  # add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 }
 ```
 ```bash
@@ -67,3 +62,9 @@ Date: Sat, 18 Mar 2023 18:20:47 GMT
 Connection: keep-alive
 Location: /web/index.html
 ```
+
+#### Home page Dashboard
+
+Just keep it in your web root path, just enjoy it.
+
+![image-20230915015903747](./dashboard/img/image-20230915015903747.png)
