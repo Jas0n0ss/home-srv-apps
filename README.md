@@ -3,12 +3,12 @@
 #### Setup 
 
 ```bash
-docker-compose apply -f docker-apps.yml
-docker-compose -f docker-apps.yml ps
+# docker-compose apply -f docker-apps.yml
+# docker-compose -f docker-apps.yml ps
 ```
 
 ```bash
-02:13:45 root@homesrv docker-app ±|main ✗|→ docker-compose -f docker-apps.yml ps
+# docker-compose -f docker-apps.yml ps
   Name                 Command               State                                                              Ports
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 alist       /entrypoint.sh                   Up      0.0.0.0:5244->5244/tcp,:::5244->5244/tcp
@@ -32,30 +32,14 @@ vmware_exporter   /usr/local/bin/vmware_exporter   Up             0.0.0.0:9272->
 ```Nginx
 server {
   listen 80;
-  server_name v.bo.ms; # I got home internal DNS Server for custom domain
-  # Enable Gzip compression for faster page load times
-  gzip on;
-  gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
-  # Set caching headers to improve performance
-  add_header Cache-Control "public, max-age=86400";
-  # Proxy requests to the backend server
+  server_name v.srv;
   location / {
     proxy_pass http://127.0.0.1:8096;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_redirect off;
   }
-  # Security headers to improve site security
-  add_header X-Content-Type-Options nosniff;
-  add_header X-Frame-Options "SAMEORIGIN";
-  add_header X-XSS-Protection "1; mode=block";
-  add_header Referrer-Policy "strict-origin";
 }
 ```
 ```bash
-02:20:39 root@homesrv docker-app ±|main|→ curl -I http://v.bo.ms
+# curl -I http://v.srv
 HTTP/1.1 302 Found
 Server: openresty/1.21.4.1
 Date: Sat, 18 Mar 2023 18:20:47 GMT
@@ -65,6 +49,8 @@ Location: /web/index.html
 
 #### Home page Dashboard
 
-Just keep it in your web root path, just enjoy it.
+Just keep it in your web root path, just enjoy it. You can find it [**here**](homepage/homepage.tgz).
 
-![image-20230915015903747](./dashboard/img/image-20230915015903747.png)
+![image-20230921173000366](./homepage/img/image-20230921173000366.png)
+
+![image-20230921173107708](./homepage/img/image-20230921173107708.png)
